@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  jupyter:
+    image: $CONTAINER_NAME:latest
+    container_name: $CONTAINER_NAME
+    env_file: .env
+    build:
+      context: ../toxic-comments/docker/
+      dockerfile: Dockerfile
+      args:
+        - USER=$USER
+    ports:
+      - "$HOST_PORT:$CONTAINER_PORT"
+    volumes:
+      - ${PWD}/../toxic-comments:/home/$USER/workspace
+    
