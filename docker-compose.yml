@@ -2,16 +2,61 @@ version: '3.3'
 
 services:
   jupyter:
-    image: $CONTAINER_NAME:latest
-    container_name: $CONTAINER_NAME
+    image: $NB_NAME:latest
+    container_name: $NB_NAME
     env_file: .env
     build:
       context: ../toxic-comments/docker/
       dockerfile: Dockerfile
       args:
-        - USER=$USER
+        - ML_USER=$ML_USER
+        - UID=$UID
+        - GID=$GID
     ports:
-      - "$HOST_PORT:$CONTAINER_PORT"
+      - "$NB_PORT:8888"
     volumes:
-      - ${PWD}/../toxic-comments:/home/$USER/workspace
-    
+      - ${PWD}/../toxic-comments:/home/$ML_USER/workspace
+    networks:
+      - toxic-network
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  mlflow:
+    container_name: mlflow
+    image: mlflow
+    build:
+      context: ../mlflow/docker/
+      dockerfile: mlflow.df
+    env_file: .env
+    ports:
+      - "$MLFLOW_PORT:5000"
+    volumes:
+      - ${PWD}/../mlflow/mlruns:$MLRUNS_PATH
+    depends_on:
+      - postgres
+    networks:
+      - toxic-network
+        
+  postgres:
+    image: postgres
+    container_name: postgres
+    env_file: .env
+    ports:
+      - "$POSTGRES_PORT:5432"
+    volumes:
+      - ${PWD}/../mlflow/postgresql/data:/var/lib/postgresql/data
+    networks:
+      - toxic-network
+    environment:
+      - POSTGRES_DB=$MLFLOW_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+networks:
+  toxic-network:
