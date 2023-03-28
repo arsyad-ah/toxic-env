@@ -28,8 +28,8 @@ services:
               capabilities: [gpu]
 
   mlflow:
-    container_name: mlflow
     image: mlflow
+    container_name: $MLFLOW_CONTAINER_NAME
     build:
       context: ../mlflow/docker/
       dockerfile: mlflow.df
@@ -45,7 +45,7 @@ services:
         
   postgres:
     image: postgres
-    container_name: postgres
+    container_name: $POSTGRES_NAME
     env_file: .env
     ports:
       - "$POSTGRES_PORT:5432"
