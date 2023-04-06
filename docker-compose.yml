@@ -6,7 +6,7 @@ services:
     container_name: $NB_NAME
     env_file: .env
     build:
-      context: ../toxic-comments/docker/
+      context: ../toxic-comments/docker/jupyter
       dockerfile: Dockerfile
       args:
         - ML_USER=$ML_USER
