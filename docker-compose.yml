@@ -6,12 +6,13 @@ services:
     container_name: $NB_NAME
     env_file: .env
     build:
-      context: ../toxic-comments/docker/jupyter
+      context: ../toxic-comments/docker/jupyter/
       dockerfile: Dockerfile
       args:
         - ML_USER=$ML_USER
         - UID=$UID
         - GID=$GID
+        # - WORKSPACE_FOLDER=$WORKSPACE_FOLDER
     ports:
       - "$NB_PORT:8888"
     volumes:
