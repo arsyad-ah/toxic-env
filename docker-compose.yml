@@ -21,7 +21,7 @@ services:
       - ../toxic-comments/notebook:/home/$ML_USER/$WORKSPACE_FOLDER/notebooks
       - ../toxic-comments/src:/home/$ML_USER/$WORKSPACE_FOLDER/src
       - ../toxic-comments/embeddings:/home/$ML_USER/$WORKSPACE_FOLDER/embeddings
-      - mlflow:/home/$ML_USER/$WORKSPACE_FOLDER/saved_models:rw
+      - ../toxic-comments/saved_models:/home/$ML_USER/$WORKSPACE_FOLDER/saved_models
     networks:
       - toxic-network
     environment:
@@ -45,8 +45,6 @@ services:
     env_file: .env
     ports:
       - "$MLFLOW_PORT:5000"
-    volumes:
-      - mlflow:$MLRUNS_PATH:rw
     depends_on:
       - postgres
     networks:
@@ -107,7 +105,6 @@ networks:
   toxic-network:
 
 volumes:
-  mlflow:
   postgres:
   minio_data:
     driver: local
